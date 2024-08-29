@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: navy;
+        }
+        #briefing-screen p, #briefing-screen ul {
+            font-size: 22px; /* Larger font size */
+            text-align: left; /* Justified alignment */
+            margin-bottom: 20px; /* Spacing between paragraphs */
+        }
+        #briefing-screen ul {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        #start-btn {
+            margin-top: 50px; /* Increased space above the start button */
+        }
+        .message-box {
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            max-width: 70%;
+            text-align: left;
+            position: relative;
+        }
+        .message-box.director {
+            background-color: #D1E7FF; /* Light blue for Director Evelyn Chase */
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .message-box.alex {
+            background-color: #FFD1DC; /* Light pink for Alex Mercer */
+            align-self: flex-start;
+            margin-right: auto;
+        }
+        .sender {
+            font-weight: bold;
+        }
+        .sender.director {
+            color: #007BFF; /* Dark blue for Director Evelyn Chase */
+        }
+        .sender.alex {
+            color: #FF69B4; /* Dark pink for Alex Mercer */
+        }
+        button {
+            background-color: #FF1493;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+        }
+        .slideshow-image {
+            display: none;
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain; /* Ensure the image is fully visible */
+        }
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 3px;
+            user-select: none;
+            background-color: rgba(0,0,0,0.8);
+            transform: translateY(-50%);
+        }
+        .prev {
+            left: 0; /* Move to far left */
+            border-radius: 3px 0 0 3px;
+        }
+        .next {
+            right: 0; /* Move to far right */
+            border-radius: 0 3px 3px 0;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.9);
+        }
+        .options {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .option-button {
+            background-color: white;
+            color: navy;
+            border: 1px solid navy;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option-button.selected {
+            background-color: navy;
+            color: white;
+        }
+        .feedback {
+            margin-top: 20px;
+            text-align: left;
+        }
+        #submit-btn {
+            margin-top: 20px;
+        }
+        #message-screen {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <div id="briefing-screen">
+        <h1>ANALYSE THE CONVERSATION</h1>
+        <p>Alex Mercer is an international spy working for 'The Division'.</p>
+        <p>As Alex goes about his mission he gets into several conversations. Analyse these to work out where people are using their childlike, parentlike, or adultlike parts of themselves.</p>
+        <ul>
+            <li><strong>Childlike Part:</strong> Emotional and reactive, driven by feelings and impulses.</li>
+            <li><strong>Parentlike Part:</strong> Authoritative and judgmental, enforcing rules and expectations.</li>
+            <li><strong>Adultlike Part:</strong> Rational and balanced, focused on logic and problem-solving.</li>
+        </ul>
+        <button id="start-btn">Start</button>
+    </div>
+
+    <div id="message-screen" style="display: none;">
+        <h1>ANALYSE THE CONVERSATION</h1>
+        
+        <div id="message-container">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="slideshow-container" id="image-container">
+            <!-- Images will be dynamically added here -->
+        </div>
+        <p>What part of self was this spoken from?</p>
+        <div class="options">
+            <button class="option-button" data-option="Adult">Adult</button>
+            <button class="option-button" data-option="Parent">Parent</button>
+            <button class="option-button" data-option="Child">Child</button>
+        </div>
+        <button id="submit-btn" style="display: none;">Submit</button>
+        <div class="feedback" style="display: none;"></div>
+        <button id="next-btn" style="display: none;">Next</button>
+    </div>
+
+    <script>
+        const conversations = [
+            {
+                sender: "Director Evelyn Chase",
+                message: "Alex, this mission is critical. Retrieve the data and extract without making a scene. Failure is not an option.",
+                images: ["Images/1.png"],
+                correctAnswer: "Parent",
+                feedback: "This response demonstrates the Parent ego state, exerting authority and control, making a decisive order that shows no room for negotiation, judgmental and punitive in nature."
+            },
+            {
+                sender: "Alex Mercer",
+                message: "Got it. Stay focused. In and out, no complications....Almost there. Keep it quiet....Just a few more seconds....",
+                images: ["Images/2.png","Images/3.png","Images/4.png"],
+                correctAnswer: "Adult",
+                feedback: "This response shows the Adult ego state, focusing on the task at hand with a calm and rational approach, without emotional reactions or authoritative commands."
+            },
+            {
+                sender: "Alex Mercer",
+                message: "What the—?! This wasn't supposed to happen!",
+                images: ["Images/5.png"],
+                correctAnswer: "Child",
+                feedback: "This outburst demonstrates the Child ego state, showing an emotional and impulsive reaction to an unexpected situation."
+            },
+            {
+                sender: "Alex Mercer",
+                message: "You said it was a simple extraction! My team is dead because of you!",
+                images: ["Images/6.png"],
+                correctAnswer: "Child",
+                feedback: "We think this sounds like Alex's Child ego state is evident as they react emotionally, blaming Director Chase for the mission's failure, and expressing hurt and anger like a child seeking accountability from an authority figure."
+            },
+            {
+                sender: "Director Evelyn Chase",
+                message: "Emotions are clouding your judgment, Alex. You need to move on.",
+                images: ["Images/7.png"],
+                correctAnswer: "Parent",
+                feedback: "We think this sounds like Evelyn's Parent ego state is clear here, as she dismisses Alex’s emotional outburst with a cold, authoritative tone, asserting control and minimizing Alex's feelings."
+            },
+            // Add more conversation objects here
+        ];
+
+        let currentConversationIndex = 0;
+        let currentSlideIndex = 0;
+
+        function loadConversation(index) {
+            const conversation = conversations[index];
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = ''; // Clear previous messages
+
+            const messageBox = document.createElement('div');
+            messageBox.classList.add('message-box');
+            messageBox.classList.add(conversation.sender === "Director Evelyn Chase" ? 'director' : 'alex');
+
+            const senderName = document.createElement('span');
+            senderName.classList.add('sender');
+            senderName.classList.add(conversation.sender === "Director Evelyn Chase" ? 'director' : 'alex');
+            senderName.textContent = conversation.sender;
+
+            const messageText = document.createElement('p');
+            messageText.textContent = conversation.message;
+
+            messageBox.appendChild(senderName);
+            messageBox.appendChild(messageText);
+            messageContainer.appendChild(messageBox);
+
+            loadSlideshow(conversation.images);
+            resetUI();
+        }
+
+        function loadSlideshow(images) {
+            const container = document.getElementById('image-container');
+            container.innerHTML = '';
+            images.forEach((img, index) => {
+                const imgElement = document.createElement('img');
+                imgElement.src = img;
+                imgElement.className = 'slideshow-image';
+                imgElement.style.display = index === 0 ? 'block' : 'none';
+                container.appendChild(imgElement);
+            });
+            if (images.length > 1) {
+                container.innerHTML += '<a class="prev" onclick="changeSlide(-1)">&#10094;</a>';
+                container.innerHTML += '<a class="next" onclick="changeSlide(1)">&#10095;</a>';
+            }
+            currentSlideIndex = 0;
+        }
+
+        function changeSlide(n) {
+            const images = document.getElementsByClassName('slideshow-image');
+            currentSlideIndex += n;
+            if (currentSlideIndex >= images.length) {currentSlideIndex = 0}
+            if (currentSlideIndex < 0) {currentSlideIndex = images.length - 1}
+            for (let i = 0; i < images.length; i++) {
+                images[i].style.display = "none";
+            }
+            images[currentSlideIndex].style.display = "block";
+        }
+
+        function resetUI() {
+            document.querySelectorAll('.option-button').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('submit-btn').style.display = 'none';
+            document.querySelector('.feedback').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        document.getElementById('start-btn').addEventListener('click', function() {
+            document.getElementById('briefing-screen').style.display = 'none';
+            document.getElementById('message-screen').style.display = 'block';
+            loadConversation(currentConversationIndex);
+        });
+
+        document.querySelectorAll('.option-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.option-button').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('submit-btn').style.display = 'inline-block';
+            });
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            const feedbackElement = document.querySelector('.feedback');
+            const selectedOption = document.querySelector('.option-button.selected').dataset.option;
+            const isCorrect = selectedOption === conversations[currentConversationIndex].correctAnswer;
+            
+            feedbackElement.innerHTML = isCorrect ?
+                `We would agree with you: ${conversations[currentConversationIndex].feedback}` :
+                `We would disagree with you: ${conversations[currentConversationIndex].feedback}`;
+            
+            feedbackElement.style.display = 'block';
+            this.style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+        });
+
+        document.getElementById('next-btn').addEventListener('click', function() {
+            currentConversationIndex++;
+            if (currentConversationIndex < conversations.length) {
+                loadConversation(currentConversationIndex);
+            } else {
+                alert("You've completed all conversations!");
+                // Here you can add logic for what happens after all conversations are done
+            }
+        });
+
+        // Initial load
+        loadConversation(currentConversationIndex);
+    </script>
+</body>
+</html>

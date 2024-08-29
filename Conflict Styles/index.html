@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict Styles Questionnaire</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #app {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        #splash-screen {
+            width: 100%;
+            height: 600px; /* Adjust this value to change the splash screen size */
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+        }
+
+        #splash-screen h1 {
+            color: #ff6b6b;
+            font-size: 36px;
+            margin: 0;
+            margin: 0;
+            padding: 20px; /* Add padding to the text for spacing from edges */
+            max-width: 80%; /* Ensure text doesn't get too close to edges on smaller screens */
+            text-align: center;
+        }
+        .screen {
+            padding: 20px;
+            text-align: center;
+            
+        }
+        h1 {
+            color: #ff6b6b;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .likert-option {
+            text-align: center;
+            font-size: 12px;
+        }
+        .scale-line {
+            height: 2px;
+            background-color: #ddd;
+            position: relative;
+            margin-top: 10px;
+        }
+        .scale-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            top: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+        button {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #result-chart {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="splash-screen" class="screen">
+            <h1>CONFLICT STYLES</h1>
+        </div>
+        <div id="question-screen" class="screen" style="display: none;">
+            <h1 id="category"></h1>
+            <div id="question" class="question"></div>
+            <img id="question-image" src="" alt="Question illustration">
+            <div class="likert-scale">
+                <div class="likert-option">Never</div>
+                <div class="likert-option">Rarely</div>
+                <div class="likert-option">Sometimes</div>
+                <div class="likert-option">Often</div>
+                <div class="likert-option">Always</div>
+            </div>
+            <div class="scale-line">
+                <div class="scale-dot" id="scale-dot"></div>
+            </div>
+            <button id="next-button">NEXT</button>
+        </div>
+        <div id="result-screen" class="screen" style="display: none;">
+            <h1>Your Conflict Style is:</h1>
+            <h2 id="conflict-style"></h2>
+            <canvas id="result-chart"></canvas>
+            <button id="finish-button">FINISH</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { category: 'Assertiveness', text: 'How often can you handle criticism without feeling overly defensive or hurt?', image: 'Images/bear.png' },
+            { category: 'Assertiveness', text: 'How often do you feel comfortable making requests of others?', image: 'Images/horse.png' },
+            { category: 'Assertiveness', text: 'How often do you speak up in group situations, even when you have a different opinion?', image: 'Images/parrot.png' },
+            { category: 'Assertiveness', text: 'How often do you feel at ease when you need to negotiate or compromise in a situation?', image: 'Images/penguins.png' },
+            { category: 'Aggressiveness', text: 'How often do you raise your voice or speak forcefully to make a point?', image: 'Images/owl.png' },
+            { category: 'Aggressiveness', text: 'How often do you interrupt others when you believe they are wrong?', image: 'Images/cock.png' },
+            { category: 'Aggressiveness', text: 'How often do you use sarcasm or a harsh tone when frustrated?', image: 'Images/cat.png' },
+            { category: 'Aggressiveness', text: 'How often do you insist on getting your way, regardless of others opinions?', image: 'Images/wolfpack.png' },
+            { category: 'Aggressiveness', text: 'How often do you criticize others openly when they dont meet your standards?', image: 'Images/parrots.png' },
+            { category: 'Passiveness', text: 'How often do you avoid confrontation to keep the peace?', image: 'Images/raven.png' },
+            { category: 'Passiveness', text: 'How often do you keep your opinions to yourself to avoid conflict?', image: 'Images/mouse.png' },
+            { category: 'Passiveness', text: 'How often do you struggle to say "no," even when you dont want to do something?', image: 'Images/camel.png' },
+            { category: 'Passiveness', text: 'How often do you avoid expressing your true feelings for fear of negative reactions?', image: 'Images/owlinatree.png' },
+            { category: 'Passiveness', text: 'How often do you agree with others just to keep the peace, even if you disagree?', image: 'Images/singing birds.png' },
+            { category: 'Passiveness', text: 'How often do you let others take advantage of you to avoid tension?', image: 'Images/Rabbit.png' },
+            { category: 'Passive-Aggressiveness', text: 'How often do you agree to do things but dont follow through to show displeasure?', image: 'Images/raven.png' },
+            { category: 'Passive-Aggressiveness', text: 'How often do you make sarcastic remarks instead of directly expressing dissatisfaction?', image: 'Images/fox.png' },
+            { category: 'Passive-Aggressiveness', text: 'How often do you give the silent treatment when upset instead of discussing the issue?', image: 'Images/sleepingbear.png' },
+            { category: 'Passive-Aggressiveness', text: 'How often do you subtly undermine others when unhappy instead of confronting the issue?', image: 'Images/cat.png' },
+            { category: 'Passive-Aggressiveness', text: 'How often do you agree to others requests but secretly resent them?', image: 'Images/oneeyedowl.png' },
+
+            
+            // Add more questions here
+        ];
+
+        let currentQuestionIndex = 0;
+        let scores = {
+            Assertiveness: 0,
+            Aggressiveness: 0,
+            Passiveness: 0,
+            'Passive-Aggressiveness': 0
+        };
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function showSplashScreen() {
+            document.getElementById('splash-screen').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('question-screen').style.display = 'block';
+                showQuestion();
+            }, 3000);
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const question = questions[currentQuestionIndex];
+                document.getElementById('category').textContent = question.category;
+                document.getElementById('question').textContent = question.text;
+                document.getElementById('question-image').src = question.image;
+                document.getElementById('scale-dot').style.left = '50%';
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('question-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            
+            const maxCategory = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            document.getElementById('conflict-style').textContent = maxCategory;
+
+            const ctx = document.getElementById('result-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(scores),
+                    datasets: [{
+                        label: 'Scores',
+                        data: Object.values(scores),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: Math.max(...Object.values(scores)) + 1
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Your Conflict Style Scores'
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('scale-dot').addEventListener('mousedown', function(e) {
+            const scaleWidth = document.querySelector('.scale-line').offsetWidth;
+            const dot = e.target;
+            
+            function moveDot(e) {
+                let left = e.clientX - dot.offsetWidth / 2 - dot.parentElement.getBoundingClientRect().left;
+                left = Math.max(0, Math.min(left, scaleWidth - dot.offsetWidth));
+                dot.style.left = `${left}px`;
+            }
+
+            function stopMoving() {
+                document.removeEventListener('mousemove', moveDot);
+                document.removeEventListener('mouseup', stopMoving);
+            }
+
+            document.addEventListener('mousemove', moveDot);
+            document.addEventListener('mouseup', stopMoving);
+        });
+
+        document.getElementById('next-button').addEventListener('click', function() {
+            const dotPosition = parseInt(document.getElementById('scale-dot').style.left) / document.querySelector('.scale-line').offsetWidth;
+            const score = Math.round(dotPosition * 4) + 1;
+            scores[questions[currentQuestionIndex].category] += score;
+            
+            currentQuestionIndex++;
+            showQuestion();
+        });
+
+        document.getElementById('finish-button').addEventListener('click', function() {
+            location.reload();
+        });
+
+        shuffleArray(questions);
+        showSplashScreen();
+    </script>
+</body>
+</html>

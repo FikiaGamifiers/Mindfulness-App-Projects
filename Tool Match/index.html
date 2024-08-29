@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match the Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #ff6b6b;
+            font-style: italic;
+        }
+        p {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .column {
+            width: 48%;
+        }
+        .item {
+            background: linear-gradient(135deg, #6c5ce7, #ff6b6b);
+            color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+        }
+        .item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+        .item .text {
+            padding: 10px;
+        }
+        #finish, #checkAnswers {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #popup-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>MATCH THE TOOL</h1>
+    <p>Match the Scenario with the Tool</p>
+    <div class="container">
+        <div class="column" id="scenarios">
+            <h2>Scenarios</h2>
+            <!-- Scenarios will be dynamically added here -->
+        </div>
+        <div class="column" id="tools">
+            <h2>Tools</h2>
+            <!-- Tools will be dynamically added here -->
+        </div>
+    </div>
+    <button id="finish">Finish</button>
+    <button id="checkAnswers">Check Answers</button>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <img id="popup-image" src="" alt="">
+            <h3 id="popup-title"></h3>
+            <p id="popup-description"></p>
+        </div>
+    </div>
+    <script>
+        const scenarios = [
+    { id: 'scenario-0', name: "Overwhelming Anxiety", image: "Images/overwhelminganxiety.png", description: "You have an important presentation at work next week and are experiencing overwhelming anxiety, worrying excessively about how you will perform and what others will think of you." },
+    { id: 'scenario-1', name: "Intense Emotions", image: "Images/intenseemotions.png", description: "You find yourself experiencing intense emotions that seem to come out of nowhere and have difficulty managing them effectively." },
+    { id: 'scenario-2', name: "Persistent Worry", image: "Images/persistentworry.png", description: "You constantly worry about various aspects of your life, from work to relationships, and find it hard to control these thoughts." }
+];
+
+const tools = [
+    { id: 'tool-0', name: "Cognitive Restructuring", image: "Images/cognitiverestructuring.png", description: "A technique to identify and challenge negative thought patterns, replacing them with more balanced and realistic ones." },
+    { id: 'tool-1', name: "Emotion Regulation", image: "Images/emotionregulation.png", description: "Strategies to recognize, understand, and manage your emotions more effectively." },
+    { id: 'tool-2', name: "Worry Postponement", image: "Images/worrypostponement.png", description: "A method to set aside a specific time for worrying, helping to reduce excessive worry throughout the day." }
+];
+
+function createItems(items, containerId) {
+    const container = document.getElementById(containerId);
+    items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.id = item.id;
+        div.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <div class="text">${item.name}</div>
+        `;
+        div.addEventListener('click', () => showPopup(item));
+        if (containerId === 'scenarios') {
+            div.draggable = true;
+            div.addEventListener('dragstart', drag);
+        }
+        container.appendChild(div);
+    });
+}
+
+function showPopup(item) {
+    const popup = document.getElementById('popup');
+    const popupImage = document.getElementById('popup-image');
+    const popupTitle = document.getElementById('popup-title');
+    const popupDescription = document.getElementById('popup-description');
+
+    popupImage.src = item.image;
+    popupTitle.textContent = item.name;
+    popupDescription.textContent = item.description;
+    popup.style.display = 'block';
+}
+
+document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('popup').style.display = 'none';
+});
+
+function drag(e) {
+    e.dataTransfer.setData("text", e.target.id);
+}
+
+function allowDrop(e) {
+    e.preventDefault();
+}
+
+function drop(e) {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("text");
+    const draggedElement = document.getElementById(data);
+    const dropTarget = e.target.closest('.item') || e.target;
+    const scenariosContainer = document.getElementById('scenarios');
+    
+    if (dropTarget.parentNode === scenariosContainer) {
+        const rect1 = draggedElement.getBoundingClientRect();
+        const rect2 = dropTarget.getBoundingClientRect();
+        
+        if (rect1.top < rect2.top) {
+            scenariosContainer.insertBefore(draggedElement, dropTarget.nextSibling);
+        } else {
+            scenariosContainer.insertBefore(draggedElement, dropTarget);
+        }
+    }
+}
+
+document.getElementById('scenarios').addEventListener('dragover', allowDrop);
+document.getElementById('scenarios').addEventListener('drop', drop);
+
+document.getElementById('finish').addEventListener('click', checkScore);
+document.getElementById('checkAnswers').addEventListener('click', showCorrectAnswers);
+
+function checkScore() {
+    const scenarioElements = document.querySelectorAll('#scenarios .item');
+    let score = 0;
+    scenarioElements.forEach((element, index) => {
+        if (element.id === `scenario-${index}`) {
+            score++;
+        }
+    });
+    alert(`Your score: ${score} out of ${scenarios.length}`);
+}
+
+function showCorrectAnswers() {
+    const scenariosContainer = document.getElementById('scenarios');
+    scenarios.forEach((scenario, index) => {
+        const scenarioElement = document.getElementById(scenario.id);
+        scenariosContainer.appendChild(scenarioElement);
+    });
+}
+
+createItems(scenarios, 'scenarios');
+createItems(tools, 'tools');
+    </script>
+</body>
+</html>

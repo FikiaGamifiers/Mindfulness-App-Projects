@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: navy;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .intro-container {
+            display: block;
+            text-align: center;
+        }
+        .conversation-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .speech-bubble {
+            position: relative;
+            background-color: #ffcccc;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 0;
+            height: 0;
+            border: 20px solid transparent;
+            border-right-color: #ffcccc;
+            border-left: 0;
+            margin-top: -20px;
+            margin-left: -20px;
+        }
+        .options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #e6e6e6;
+        }
+        #nextButton {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-container" id="introScreen">
+        <h1>ANALYSE THE CONVERSATION</h1>
+        <p>Alex Mercer is an international spy working for ‘The Division’.</p>
+        <p>As Alex goes about his mission he gets into several conversations. Analyse these to work out where people are using their childlike, parentlike, or adultlike parts of themselves.</p>
+        <ul>
+            <li><strong>Childlike Part:</strong> Emotional and reactive, driven by feelings and impulses.</li>
+            <li><strong>Parentlike Part:</strong> Authoritative and judgmental, enforcing rules and expectations.</li>
+            <li><strong>Adultlike Part:</strong> Rational and balanced, focused on logic and problem-solving.</li>
+        </ul>
+        <button onclick="startAnalysis()">Start</button>
+    </div>
+
+    <div class="container" id="conversationContainer">
+        <h1>ANALYSE THE CONVERSATION</h1>
+        <div class="conversation-container">
+            <img id="conversationImage" class="conversation-image" src="" alt="Conversation context">
+            <div id="conversationText" class="speech-bubble"></div>
+        </div>
+        <div class="options">
+            <button onclick="checkAnswer('Adult')">Adult</button>
+            <button onclick="checkAnswer('Parent')">Parent</button>
+            <button onclick="checkAnswer('Child')">Child</button>
+        </div>
+        <div id="feedback"></div>
+        <button id="nextButton" onclick="nextConversation()">NEXT</button>
+    </div>
+
+    <script>
+        const conversations = [
+            {
+                text: "Alex, this mission is critical. Retrieve the data and extract without making a scene. Failure is not an option.",
+                correctAnswer: "Parent",
+                image: "Images/1.png",
+                feedback: "We think this sounds like Director Evelyn is operating in the Parent ego state, exerting authority and control, making a decisive order that shows no room for negotiation, judgmental and punitive in nature."
+            },
+            {
+                text: "I'm scared, Alex. What if we get caught? I don't want to go to jail!",
+                correctAnswer: "Child",
+                image: "https://example.com/scared-agent.jpg",
+                feedback: "This response appears to come from the Child ego state, expressing fear and emotional vulnerability without considering logical consequences or solutions."
+            },
+            {
+                text: "Let's assess the situation logically. We have multiple entry points and a 15-minute window. Our best option is to...",
+                correctAnswer: "Adult",
+                image: "https://example.com/planning-session.jpg",
+                feedback: "This response demonstrates the Adult ego state, focusing on logical analysis of the situation and problem-solving without emotional reactions or authoritative commands."
+            }
+        ];
+
+        let currentConversationIndex = 0;
+
+        function startAnalysis() {
+            document.getElementById('introScreen').style.display = 'none';
+            document.getElementById('conversationContainer').style.display = 'block';
+            displayConversation();
+        }
+
+        function displayConversation() {
+            const container = document.getElementById('conversationText');
+            const image = document.getElementById('conversationImage');
+            container.textContent = conversations[currentConversationIndex].text;
+            image.src = conversations[currentConversationIndex].image;
+        }
+
+        function checkAnswer(answer) {
+            const feedback = document.getElementById('feedback');
+            const correctAnswer = conversations[currentConversationIndex].correctAnswer;
+            const feedbackText = conversations[currentConversationIndex].feedback;
+            
+            if (answer === correctAnswer) {
+                feedback.innerHTML = `<p style="color: green;">We would agree with you:</p><p>${feedbackText}</p>`;
+            } else {
+                feedback.innerHTML = `<p style="color: red;">We would disagree with you:</p><p>${feedbackText}</p>`;
+            }
+
+            document.getElementById('nextButton').style.display = 'block';
+        }
+
+        function nextConversation() {
+            currentConversationIndex++;
+            if (currentConversationIndex < conversations.length) {
+                displayConversation();
+                document.getElementById('feedback').textContent = "";
+                document.getElementById('nextButton').style.display = 'none';
+            } else {
+                document.getElementById('conversationText').textContent = "You've completed all conversations!";
+                document.querySelector('.options').style.display = 'none';
+                document.getElementById('nextButton').style.display = 'none';
+                document.getElementById('conversationImage').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
