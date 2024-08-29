@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#app {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #ff6b6b;
+}
+
+input, button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #ff4081;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#circleMap {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+}
+
+.circle {
+    position: absolute;
+    border: 1px solid #4a90e2;
+    border-radius: 50%;
+}
+
+#circle3 {
+    width: 300px;
+    height: 300px;
+    top: 0;
+    left: 0;
+}
+
+#circle2 {
+    width: 200px;
+    height: 200px;
+    top: 50px;
+    left: 50px;
+}
+
+#circle1 {
+    width: 100px;
+    height: 100px;
+    top: 100px;
+    left: 100px;
+}
+
+#you {
+    position: absolute;
+    top: 145px;
+    left: 140px;
+    font-size: 14px;
+}
+
+.dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+#legend {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.legend-item {
+    margin-bottom: 5px;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle of Intimacy</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>CIRCLE OF INTIMACY</h1>
+        <div id="page1">
+            <p>Name a person in your life:</p>
+            <input type="text" id="nameInput" placeholder="Name">
+            <p>What is their relationship to you:</p>
+            <p><em>Example: Mum, Friend, Colleague</em></p>
+            <input type="text" id="relationshipInput" placeholder="Relationship">
+            <button onclick="nextPage()">NEXT</button>
+        </div>
+        <div id="page2" style="display: none;">
+            <p>Put a dot on this map showing how close your relationship is with</p>
+            <p id="personInfo"></p>
+            <div id="circleMap">
+                <div class="circle" id="circle3"></div>
+                <div class="circle" id="circle2"></div>
+                <div class="circle" id="circle1"></div>
+                <div id="you">You</div>
+            </div>
+            <div id="legend"></div>
+            <button onclick="addAnother()">Add Another</button>
+            <button onclick="finish()">Finish</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
