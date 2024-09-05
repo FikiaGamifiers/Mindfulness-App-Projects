@@ -1,0 +1,260 @@
+import sys
+from PySide6.QtWidgets import (QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QPushButton, QWidget)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap, QFont
+
+class GAD7App(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # GAD-7 Questions
+        self.questions = [
+            "Feeling nervous, anxious, or on edge?",
+            "Not being able to stop or control worrying?",
+            "Worrying too much about different things?",
+            "Having trouble relaxing?",
+            "Being so restless that it is hard to sit still?",
+            "Becoming easily annoyed or irritable?",
+            "Feeling afraid, as if something awful might happen?"
+        ]
+
+        # Map of question numbers to image filenames
+        self.images = ["one.png", "two.png", "three.png", "four.png", "five.png", "six.png", "seven.png"]
+
+        # Responses tracking
+        self.responses = [0] * len(self.questions)
+        self.current_question = 0
+
+        # Setup UI
+        self.setWindowTitle("GAD-7 Anxiety Assessment")
+        self.setGeometry(100, 100, 600, 800)
+        self.setStyleSheet("background-color: #F0F8FF;")  # Light pastel background color
+
+        self.main_widget = QWidget(self)
+        self.setCentralWidget(self.main_widget)
+        self.layout = QVBoxLayout()
+
+        # Title
+        self.title = QLabel("GAD-7")
+        self.title.setFont(QFont("Arial", 28, QFont.Bold))
+        self.title.setAlignment(Qt.AlignCenter)
+        self.title.setStyleSheet("color: #FF6347;")  # Coral red color for the title
+        self.layout.addWidget(self.title)
+
+        # Subheading
+        self.subheading = QLabel("Over the last two weeks, how often have you been bothered by:")
+        self.subheading.setFont(QFont("Arial", 14))
+        self.subheading.setAlignment(Qt.AlignCenter)
+        self.subheading.setStyleSheet("color: #4A4A4A;")  # Softer dark gray text color
+        self.layout.addWidget(self.subheading)
+
+        # Question Display (bold)
+        self.question_label = QLabel(f"{self.questions[self.current_question]}")
+        self.question_label.setFont(QFont("Arial", 16, QFont.Bold))
+        self.question_label.setAlignment(Qt.AlignCenter)
+        self.question_label.setStyleSheet("color: #000000;")  # Bold black for question text
+        self.layout.addWidget(self.question_label)
+
+        # Image Display
+        self.image_label = QLabel(self)
+        self.image_label.setAlignment(Qt.AlignCenter)
+        self.set_image(self.images[self.current_question])
+        self.layout.addWidget(self.image_label)
+
+        # Instruction Label for Response Selection
+        self.instruction_label = QLabel("Select your response")
+        self.instruction_label.setFont(QFont("Arial", 14))
+        self.instruction_label.setAlignment(Qt.AlignCenter)
+        self.instruction_label.setStyleSheet("color: #4A4A4A;")
+        self.layout.addWidget(self.instruction_label)
+
+        # Slider for responses
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(3)
+        self.slider.setTickPosition(QSlider.TicksBelow)
+        self.slider.setTickInterval(1)
+        self.slider.valueChanged.connect(self.update_response)
+
+        # Set custom slider stylesheet for orange color and thicker line
+        self.slider.setStyleSheet("""
+            QSlider::groove:horizontal {
+                border: 1px solid #FF4500;
+                height: 8px;
+                background: #E0E0E0;
+                margin: 0px 20px;
+            }
+            QSlider::handle:horizontal {
+                background: #FF7F50;
+                border: 1px solid #FF4500;
+                width: 20px;
+                height: 20px;
+                margin: -7px 0; /* Center the handle */
+                border-radius: 10px;
+            }
+            QSlider::handle:horizontal:hover {
+                background: #FF6347;
+            }
+            QSlider::sub-page:horizontal {
+                background: #FF7F50;
+                border: 1px solid #FF4500;
+                height: 8px;
+            }
+            QSlider::add-page:horizontal {
+                background: #D3D3D3;
+                border: 1px solid #999999;
+                height: 8px;
+            }
+        """)
+        self.layout.addWidget(self.slider)
+
+        # Create a layout for the response labels under the slider using an HBoxLayout
+        self.labels_layout = QHBoxLayout()
+
+        # Add spacer labels to ensure correct alignment
+        self.label_left_spacer = QLabel()
+        self.label_left_spacer.setFixedWidth(20)  # Left padding
+
+        # Label text for each position (split longer text into two lines)
+        self.label_left = QLabel("Not at all")
+        self.label_left.setAlignment(Qt.AlignLeft)
+        self.label_left.setStyleSheet("color: #4A4A4A;")  # Softer dark gray text color
+
+        self.label_center_left = QLabel("Several\ndays")  # Breaking into two lines
+        self.label_center_left.setAlignment(Qt.AlignCenter)
+        self.label_center_left.setStyleSheet("color: #4A4A4A;")
+
+        self.label_center_right = QLabel("More than\nhalf the days")  # Breaking into two lines
+        self.label_center_right.setAlignment(Qt.AlignCenter)
+        self.label_center_right.setStyleSheet("color: #4A4A4A;")
+
+        self.label_right = QLabel("Nearly\nevery day")  # Breaking into two lines
+        self.label_right.setAlignment(Qt.AlignRight)
+        self.label_right.setStyleSheet("color: #4A4A4A;")
+
+        # Add labels to the layout with even spacing
+        self.labels_layout.addWidget(self.label_left_spacer)
+        self.labels_layout.addWidget(self.label_left)
+        self.labels_layout.addWidget(self.label_center_left)
+        self.labels_layout.addWidget(self.label_center_right)
+        self.labels_layout.addWidget(self.label_right)
+
+        self.layout.addLayout(self.labels_layout)
+
+        # Buttons
+        self.next_button = QPushButton("NEXT")
+        self.next_button.setFont(QFont("Arial", 12))
+        self.next_button.setStyleSheet("""
+            background-color: #FF1493;
+            color: white;
+            border-radius: 15px;
+            padding: 10px;
+            width: 150px;
+            margin-top: 20px;
+        """)  # Pink button with rounded corners
+        self.next_button.clicked.connect(self.next_question)
+        self.layout.addWidget(self.next_button, alignment=Qt.AlignCenter)
+
+        self.main_widget.setLayout(self.layout)
+
+    def set_image(self, image_path):
+        # Load the corresponding image for the question
+        pixmap = QPixmap(image_path)
+        scaled_pixmap = pixmap.scaled(300, 300, Qt.KeepAspectRatio)
+        self.image_label.setPixmap(scaled_pixmap)
+
+    def update_response(self):
+        self.responses[self.current_question] = self.slider.value()
+
+    def next_question(self):
+        self.update_response()
+        if self.current_question < len(self.questions) - 1:
+            self.current_question += 1
+            self.update_ui()
+        else:
+            self.show_results()
+
+    def update_ui(self):
+        # Update the question and image based on the current question number
+        self.question_label.setText(f"{self.questions[self.current_question]}")
+        self.set_image(self.images[self.current_question])
+        self.slider.setValue(self.responses[self.current_question])
+
+    def show_results(self):
+        total_score = sum(self.responses)
+        result_text = self.interpret_score(total_score)
+
+        # Update the question label to show the result text (interpretation score)
+        self.question_label.setText(result_text)
+
+        # Hide unnecessary elements to only display the result
+        self.subheading.hide()  # Hide the subtitle
+        self.instruction_label.hide()  # Hide the "Select your response" label
+        self.image_label.hide()
+        self.slider.hide()
+        self.label_left.hide()
+        self.label_center_left.hide()
+        self.label_center_right.hide()
+        self.label_right.hide()
+        self.next_button.hide()
+
+        # Add Restart Button
+        self.restart_button = QPushButton("Restart Assessment")
+        self.restart_button.setFont(QFont("Arial", 12))
+        self.restart_button.setStyleSheet("""
+            background-color: #32CD32;  # Lime green color
+            color: white;
+            border-radius: 15px;
+            padding: 10px;
+            width: 150px;
+            margin-top: 20px;
+        """)
+        self.restart_button.clicked.connect(self.restart_assessment)
+        self.layout.addWidget(self.restart_button, alignment=Qt.AlignCenter)
+
+    def restart_assessment(self):
+        # Reset responses and UI
+        self.responses = [0] * len(self.questions)
+        self.current_question = 0
+        self.update_ui()
+
+        # Show hidden UI elements again
+        self.subheading.show()
+        self.instruction_label.show()
+        self.image_label.show()
+        self.slider.show()
+        self.label_left.show()
+        self.label_center_left.show()
+        self.label_center_right.show()
+        self.label_right.show()
+        self.next_button.show()
+
+        # Hide the restart and save buttons
+        self.restart_button.hide()
+        self.save_button.hide()
+
+    def save_results(self):
+        # Save the results to a file (e.g., GAD7_results.txt)
+        total_score = sum(self.responses)
+        result_text = self.interpret_score(total_score)
+        with open("GAD7_results.txt", "w") as file:
+            file.write(f"GAD-7 Anxiety Assessment Results\n")
+            file.write(f"Total Score: {total_score}\n")
+            file.write(f"Interpretation: {result_text}\n")
+        
+        # Show a success message    
+    def interpret_score(self, score):
+        if score <= 4:
+            return "Minimal anxiety. Keep an eye on your mental health."
+        elif score <= 9:
+            return "Mild anxiety. Consider relaxation techniques."
+        elif score <= 14:
+            return "Moderate anxiety. Talking to a mental health professional may be helpful."
+        else:
+            return "Severe anxiety. It is advisable to seek help from a mental health professional."
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = GAD7App()
+    window.show()
+    sys.exit(app.exec())
