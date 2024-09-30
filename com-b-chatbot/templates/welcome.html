@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #ff6200;
+            margin-bottom: 20px;
+            font-family: 'Georgia', serif;
+        }
+
+        p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 15px 25px;
+            background-color: #ff0077;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #d10063;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome to the COM-B Reflection Tool</h1>
+    <p>Start reflecting on the changes you want to make in your life. We will guide you through the steps to discover what's stopping you from making those important changes.</p>
+    <a class="button" href="{{ url_for('question_page', question_number=1) }}">Start Now</a>
+</div>
+
+</body>
+</html>

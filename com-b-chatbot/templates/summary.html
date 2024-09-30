@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #ff6200;
+            margin-bottom: 20px;
+            font-family: 'Georgia', serif;
+        }
+
+        p {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        p strong {
+            font-size: 24px;
+            color: #000;
+        }
+
+        .barriers-box {
+            border: 2px solid #a349a4; /* Light purple border */
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .barriers-box p {
+            font-size: 18px;
+            color: #000;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 15px 25px;
+            background-color: #ff0077;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #d10063;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>WHAT'S STOPPING ME?</h1>
+    <p>You said you wanted to change your life by:</p>
+    <p><strong>{{ behavioral_goal }}</strong></p>
+    
+    <p>You also spoke of the things that get in the way of you doing this:</p>
+
+    <!-- Barriers Section with Box around -->
+    <div class="barriers-box">
+        {% for barrier in barriers %}
+            <p>{{ barrier }}</p>
+        {% endfor %}
+    </div>
+
+    <!-- Call to Action Button -->
+    <a class="button" href="{{ url_for('start') }}">Get Started</a>
+</div>
+
+</body>
+</html>
