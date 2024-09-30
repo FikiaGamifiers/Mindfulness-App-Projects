@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Stopping Me? - Support</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>WHAT'S STOPPING ME?</h1>
+        <h2>Tell us if you think any of the support we can provide would be useful to you:</h2>
+
+        <!-- Display support options dynamically -->
+        <form method="POST" action="{{ url_for('show_supports', question_index=question_index) }}">
+            <div class="support-options">
+                {% for support in supports %}
+                    <div class="support-option">
+                        <input type="checkbox" id="support{{ loop.index }}" name="supports" value="{{ support }}">
+                        <!-- Picture button with label -->
+                        <label for="support{{ loop.index }}" class="support-label">
+                            <img src="{{ url_for('static', filename='images/default_image.png') }}" alt="Help Finding Resources" class="support-image">
+                            <span>{{ support }}</span>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="next-button">Next</button>
+        </form>
+    </div>
+</body>
+</html>

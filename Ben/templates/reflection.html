@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    <script>
+        function validateForm() {
+            var reflection = document.forms["reflectionForm"]["reflection"].value.trim();
+            
+            // If the reflection field is empty, show an alert and prevent form submission
+            if (reflection === "") {
+                alert("Error: Please fill out the reflection field.");
+                return false; // Prevents form submission
+            }
+            return true; // Allows form submission if validation passes
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>What's Stopping Me?</h1>
+        <p>What are some things in your life that you’re thinking about changing or improving?</p>
+
+        <!-- Reflection form with JavaScript validation -->
+        <form name="reflectionForm" method="POST" action="{{ url_for('reflection') }}" onsubmit="return validateForm()">
+            <textarea name="reflection" placeholder="Type here..."></textarea>
+            <button type="submit">Next</button>
+        </form>
+    </div>
+</body>
+</html>

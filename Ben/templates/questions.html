@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Stopping Me?</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>WHAT'S STOPPING ME?</h1>
+        <p>{{ question }}</p>
+
+        <!-- Displaying the image -->
+        <img src="{{ url_for('static', filename='images/default_image.png') }}" alt="Question Image" class="question-image">
+
+        <!-- Yes/No Button Group -->
+        <form method="POST" action="{{ url_for('get_question', question_index=question_index) }}">
+            <div class="button-group">
+                <button type="submit" name="answer" value="no" class="no-button">No</button>
+                <button type="submit" name="answer" value="yes" class="yes-button">Yes</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

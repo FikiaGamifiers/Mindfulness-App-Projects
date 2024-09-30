@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflective Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>WHAT'S STOPPING ME?</h1>
+        <p>You said you wanted to change your life by:</p>
+        <p><strong>{{ reflection }}</strong></p>
+        <p>Here are the supports you selected:</p>
+
+        <!-- Loop through the responses and only display the supports -->
+        <ul>
+            {% for response in relevant_responses %}
+                {% for support in response.supports %}
+                    <li>{{ support }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('finish') }}" class="finish-button">Finish</a>
+    </div>
+</body>
+</html>
